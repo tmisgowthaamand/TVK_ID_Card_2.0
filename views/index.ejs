@@ -1,3 +1,8 @@
+<header class="app-header">
+    <h1 class="app-title">TVK ID CARD <span class="highlight">GENERATOR</span></h1>
+    <p class="app-subtitle">தமிழக வெற்றிக் கழகம் - உறுப்பினர் அட்டை வடிவமைப்பு மற்றும் தயாரிப்பு</p>
+</header>
+
 <div class="app-layout">
     <!-- Chatbot Window (Left Side) -->
     <div class="chatbot-window">
@@ -6,12 +11,17 @@
                 <i class="fa-solid fa-robot"></i>
             </div>
             <div class="chatbot-header-text">
-                <h3>TVK ID அட்டை உதவியாளர்</h3>
+                <h2>TVK ID அட்டை உதவியாளர்</h2>
                 <span class="status-online"><span class="status-dot"></span>ஆன்லைனில்</span>
             </div>
         </div>
         <div class="chat-messages" id="chatMessages">
             <!-- Messages will be dynamically inserted here -->
+            <div class="typing-indicator-container" id="typingIndicator" style="display: none;">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
         </div>
         <div class="chat-input-container">
             <div class="chat-input-row" id="textInputRow">
@@ -21,10 +31,13 @@
             <div class="chat-upload-row" id="uploadInputRow" style="display: none;">
                 <input type="file" id="photoUpload" accept="image/*" style="display: none;">
                 <button id="uploadBtn" class="action-btn"><i class="fa-solid fa-camera"></i> புகைப்படத்தைத் தேர்ந்தெடுக்கவும்</button>
+                <button id="skipPhotoBtn" class="reset-action-btn"><i class="fa-solid fa-forward"></i> புகைப்படம் இல்லாமல் தொடரவும்</button>
             </div>
             <div class="chat-download-row" id="downloadRow" style="display: none;">
-                <button id="downloadBtn" class="download-action-btn"><i class="fa-solid fa-download"></i> அட்டைப் பதிவிறக்கம் (PNG)</button>
-                <button id="resetBtn" class="reset-action-btn"><i class="fa-solid fa-rotate-right"></i> மீண்டும்</button>
+                <button id="downloadBtn" class="download-action-btn"><i class="fa-solid fa-download"></i> அட்டைப்
+                    பதிவிறக்கம் (PNG)</button>
+                <button id="resetBtn" class="reset-action-btn"><i class="fa-solid fa-rotate-right"></i>
+                    மீண்டும்</button>
             </div>
         </div>
     </div>
@@ -80,13 +93,15 @@
                     </div>
 
                     <div class="photo-qr-container">
-                        <div class="member-photo-frame">
-                            <img id="valPhoto" src="" alt="Member Photo" style="display: none; width: 100%; height: 100%; object-fit: cover;">
+                        <div class="member-photo-frame" id="memberPhotoFrame" style="display: none;">
+                            <img id="valPhoto" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Member Photo"
+                                style="display: none; width: 100%; height: 100%; object-fit: cover;">
                             <div id="photoPlaceholder" class="photo-placeholder"></div>
                         </div>
                         <div class="qr-container">
                             <div class="qr-box">
-                                <img id="valQrCode" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<%= member.memberId %>&color=800000&bgcolor=FFCE00"
+                                <img id="valQrCode"
+                                    src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<%= member.memberId %>&color=800000&bgcolor=FFCE00"
                                     alt="QR">
                             </div>
                             <div class="member-id-vertical" id="valMemberId">
@@ -103,7 +118,7 @@
                     </div>
 
                     <div class="signature-wrapper">
-                        <img src="/images/signature.jpeg" alt="Signature" class="signature-image">
+                        <img src="/images/signature.png" alt="Signature" class="signature-image">
                         <div class="signature-title">தலைவர்</div>
                     </div>
                 </div>
@@ -129,6 +144,12 @@
     </div>
 </div>
 
+<!-- Rendering Overlay Loader -->
+<div class="render-overlay" id="renderOverlay" style="display: none;">
+    <div class="render-spinner"></div>
+    <div class="render-text" id="renderOverlayText">சேமிக்கப்படுகிறது... தயவுசெய்து காத்திருக்கவும்</div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const chatMessages = document.getElementById('chatMessages');
@@ -142,6 +163,10 @@
         const downloadBtn = document.getElementById('downloadBtn');
         const resetBtn = document.getElementById('resetBtn');
 
+        // Typing indicator & Render overlay
+        const typingIndicator = document.getElementById('typingIndicator');
+        const renderOverlay = document.getElementById('renderOverlay');
+
         // Card Preview Elements
         const valName = document.getElementById('valName');
         const valBoothNo = document.getElementById('valBoothNo');
@@ -152,6 +177,7 @@
         const photoPlaceholder = document.getElementById('photoPlaceholder');
         const valQrCode = document.getElementById('valQrCode');
         const valMemberId = document.getElementById('valMemberId');
+
 
         let currentStep = 0;
         let memberData = {
@@ -170,9 +196,32 @@
             return 'WJB' + randomNum;
         }
 
+        // Typing indicator helpers
+        function showTypingIndicator() {
+            typingIndicator.style.display = 'flex';
+            chatMessages.appendChild(typingIndicator); // Keep at the bottom
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            typingIndicator.style.display = 'none';
+        }
+
+        // Simulate chatbot typing simulation
+        function simulateBotTyping(text, delay = 800) {
+            showTypingIndicator();
+            setTimeout(() => {
+                hideTypingIndicator();
+                addBotMessage(text);
+            }, delay);
+        }
+
         // Initialize/reset card and chat
         function initChat() {
             chatMessages.innerHTML = '';
+            chatMessages.appendChild(typingIndicator);
+            typingIndicator.style.display = 'none';
+
             memberData = {
                 name: '',
                 boothNo: '',
@@ -180,7 +229,7 @@
                 district: '',
                 state: '',
                 memberId: generateMemberId(),
-                photoUrl: '/images/vijay.jpg'
+                photoUrl: ''
             };
 
             // Reset preview
@@ -189,9 +238,9 @@
             valConstituency.innerText = memberData.constituency;
             valDistrict.innerText = memberData.district;
             valState.innerText = memberData.state;
-            valPhoto.src = memberData.photoUrl;
-            valPhoto.style.display = 'block';
-            photoPlaceholder.style.display = 'none';
+            valPhoto.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+            valPhoto.style.display = 'none';
+            photoPlaceholder.style.display = 'block';
 
             // Set dynamic QR code and vertical text
             valMemberId.innerText = memberData.memberId;
@@ -206,16 +255,17 @@
             sendBtn.disabled = false;
 
             currentStep = 0;
-            addBotMessage("வணக்கம்! நான் TVK உறுப்பினர் அட்டை தயாரிக்கும் உதவியாளர். உங்கள் புதிய அட்டை தயாராக சில கேள்விகளுக்கு பதிலளிக்கவும்.");
+
+            simulateBotTyping("வணக்கம்! நான் TVK உறுப்பினர் அட்டை தயாரிக்கும் உதவியாளர். உங்கள் புதிய அட்டை தயாராக சில கேள்விகளுக்கு பதிலளிக்கவும்.", 600);
             setTimeout(() => {
-                addBotMessage("முதலில், **உறுப்பினரின் பெயர் (Name)** என்ன?");
-            }, 800);
+                simulateBotTyping("முதலில், **உறுப்பினரின் பெயர் (Name)** என்ன?", 800);
+            }, 1200);
         }
 
         function addBotMessage(text) {
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message bot-message';
-            
+
             // Basic markdown-like replacement for bold text
             let htmlContent = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             messageDiv.innerHTML = `<div class="message-bubble">${htmlContent}</div>`;
@@ -256,43 +306,37 @@
                     memberData.name = val;
                     valName.innerText = val;
                     currentStep = 1;
-                    setTimeout(() => {
-                        addBotMessage("அடுத்து, உங்கள் **பூத் எண் (Booth No)** உள்ளிடவும்:");
-                    }, 500);
+                    simulateBotTyping("அடுத்து, உங்கள் **பூத் எண் (Booth No)** உள்ளிடவும்:", 1000);
                     break;
                 case 1:
                     memberData.boothNo = val;
                     valBoothNo.innerText = val;
                     currentStep = 2;
-                    setTimeout(() => {
-                        addBotMessage("உங்கள் **சட்டமன்ற தொகுதி (Assembly Constituency)** பெயர் என்ன?");
-                    }, 500);
+                    simulateBotTyping("உங்கள் **சட்டமன்ற தொகுதி (Assembly Constituency)** பெயர் என்ன?", 1000);
                     break;
                 case 2:
                     memberData.constituency = val;
                     valConstituency.innerText = val;
                     currentStep = 3;
-                    setTimeout(() => {
-                        addBotMessage("உங்கள் **மாவட்டம் (District)** எது?");
-                    }, 500);
+                    simulateBotTyping("உங்கள் **மாவட்டம் (District)** எது?", 1000);
                     break;
                 case 3:
                     memberData.district = val;
                     valDistrict.innerText = val;
                     currentStep = 4;
-                    setTimeout(() => {
-                        addBotMessage("உங்கள் **மாநிலம் (State)** எது? (தமிழ்நாடு என அமைக்க Enter அழுத்தவும்)");
-                    }, 500);
+                    simulateBotTyping("உங்கள் **மாநிலம் (State)** எது? (தமிழ்நாடு என அமைக்க Enter அழுத்தவும்)", 1000);
                     break;
                 case 4:
                     memberData.state = val || defaultState;
                     valState.innerText = memberData.state;
                     currentStep = 5;
+                    showTypingIndicator();
                     setTimeout(() => {
+                        hideTypingIndicator();
                         addBotMessage("இப்போது, உங்கள் **புகைப்படத்தை (Photo)** பதிவேற்றவும். கீழே உள்ள பொத்தானைப் பயன்படுத்தவும்:");
                         textInputRow.style.display = 'none';
                         uploadInputRow.style.display = 'flex';
-                    }, 500);
+                    }, 1000);
                     break;
             }
         }
@@ -323,11 +367,13 @@
                     uploadInputRow.style.display = 'none';
                     currentStep = 6;
 
+                    showTypingIndicator();
                     setTimeout(() => {
+                        hideTypingIndicator();
                         addBotMessage("அற்புதம்! உங்கள் TVK உறுப்பினர் அட்டை முழுமையாகத் தயாராக உள்ளது.");
-                        addBotMessage("கீழே உள்ள பதிவிறக்க பொத்தானை அழுத்தி அட்டைப் படத்தை (PNG) சேமித்துக் கொள்ளலாம்.");
+                        simulateBotTyping("கீழே உள்ள பதிவிறக்க பொத்தானை அழுத்தி அட்டைப் படத்தை (PNG) சேமித்துக் கொள்ளலாம்.", 1000);
                         downloadRow.style.display = 'flex';
-                    }, 800);
+                    }, 1200);
                 };
                 reader.readAsDataURL(file);
             }
@@ -336,17 +382,17 @@
         // Download ID Card PNG using html2canvas
         downloadBtn.addEventListener('click', () => {
             const cardEl = document.getElementById('idCard');
-            
+
+            // Show render overlay
+            renderOverlay.style.display = 'flex';
+
             // Temporarily reset any CSS transforms or scale for rendering
             const prevTransform = cardEl.style.transform;
             cardEl.style.transform = 'none';
 
-            // Show a status indicator in the chat
-            addBotMessage("⏳ உங்கள் உறுப்பினர் அட்டை படம் தயாராகிறது, தயவுசெய்து காத்திருக்கவும்...");
-
             setTimeout(() => {
                 html2canvas(cardEl, {
-                    scale: 2, // High resolution (2x scale)
+                    scale: 2.5, // High resolution for print
                     useCORS: true,
                     backgroundColor: null,
                     logging: false
@@ -359,12 +405,16 @@
                     link.href = canvas.toDataURL('image/png');
                     link.click();
 
-                    addBotMessage("✅ அட்டை வெற்றிகரமாகப் பதிவிறக்கப்பட்டது!");
+                    // Hide overlay
+                    renderOverlay.style.display = 'none';
+
+                    simulateBotTyping("✅ அட்டை வெற்றிகரமாகப் பதிவிறக்கப்பட்டது!", 600);
                 }).catch(err => {
                     console.error("Canvas render error: ", err);
-                    addBotMessage("❌ பதிவிறக்குவதில் பிழை ஏற்பட்டது. மீண்டும் முயற்சிக்கவும்.");
+                    renderOverlay.style.display = 'none';
+                    simulateBotTyping("❌ பதிவிறக்குவதில் பிழை ஏற்பட்டது. மீண்டும் முயற்சிக்கவும்.", 600);
                 });
-            }, 500);
+            }, 800);
         });
 
         // Reset and start again
@@ -372,5 +422,47 @@
 
         // Start Chatbot
         initChat();
-    });
+
+    // ── 3D Card Tilt Effect ─────────────────────────────────
+    const card3D = document.getElementById('idCard');
+const cardShine = document.getElementById('cardShine');
+const previewArea = document.querySelector('.preview-area');
+
+if (card3D && previewArea) {
+const MAX_TILT = 12;
+
+previewArea.addEventListener('mousemove', (e) => {
+const rect = card3D.getBoundingClientRect();
+const cardCenterX = rect.left + rect.width / 2;
+const cardCenterY = rect.top + rect.height / 2;
+
+const normX = (e.clientX - cardCenterX) / (rect.width / 2);
+const normY = (e.clientY - cardCenterY) / (rect.height / 2);
+
+const clampedX = Math.max(-1, Math.min(1, normX));
+const clampedY = Math.max(-1, Math.min(1, normY));
+
+const rotateY = clampedX * MAX_TILT;
+const rotateX = -clampedY * MAX_TILT;
+
+card3D.style.transform = `scale(0.92) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+card3D.style.boxShadow = `${-rotateY * 2}px ${rotateX * 2}px 60px rgba(0,0,0,0.45)`;
+
+if (cardShine) {
+const shineX = ((e.clientX - rect.left) / rect.width) * 100;
+const shineY = ((e.clientY - rect.top) / rect.height) * 100;
+cardShine.style.background = `radial-gradient(circle at ${shineX}% ${shineY}%, rgba(255,255,255,0.18) 0%,
+rgba(255,255,255,0) 60%)`;
+}
+});
+
+previewArea.addEventListener('mouseleave', () => {
+card3D.style.transform = 'scale(0.92) rotateX(0deg) rotateY(0deg)';
+card3D.style.boxShadow = '0 35px 70px rgba(0,0,0,0.45)';
+if (cardShine) {
+cardShine.style.background = 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 100%)';
+}
+});
+}
+});
 </script>
