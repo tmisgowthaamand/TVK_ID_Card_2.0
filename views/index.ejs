@@ -178,20 +178,20 @@
                 boothNo: '',
                 constituency: '',
                 district: '',
-                state: 'தமிழ்நாடு',
+                state: '',
                 memberId: generateMemberId(),
-                photoUrl: ''
+                photoUrl: '/images/vijay.jpg'
             };
 
             // Reset preview
-            valName.innerText = '-';
-            valBoothNo.innerText = '-';
-            valConstituency.innerText = '-';
-            valDistrict.innerText = '-';
-            valState.innerText = '-';
-            valPhoto.style.display = 'none';
-            valPhoto.src = '';
-            photoPlaceholder.style.display = 'block';
+            valName.innerText = memberData.name;
+            valBoothNo.innerText = memberData.boothNo;
+            valConstituency.innerText = memberData.constituency;
+            valDistrict.innerText = memberData.district;
+            valState.innerText = memberData.state;
+            valPhoto.src = memberData.photoUrl;
+            valPhoto.style.display = 'block';
+            photoPlaceholder.style.display = 'none';
 
             // Set dynamic QR code and vertical text
             valMemberId.innerText = memberData.memberId;

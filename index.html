@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="ta">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TVK ID Card Design & Generator</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arima:wght@100..700&family=Hind+Madurai:wght@300;400;500;600;700&family=Noto+Sans+Tamil:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- html2canvas for client-side PNG downloads -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            --primary-yellow: #FFCE00;
+            --primary-maroon: #800000;
+            --card-width: 856px;
+            --card-height: 540px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans Tamil', 'Hind Madurai', sans-serif;
+        }
+
+        body {
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .card-container {
+            background-color: var(--primary-yellow);
+            width: var(--card-width);
+            height: var(--card-height);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+            flex-shrink: 0;
+        }
+
+        .header {
+            text-align: left;
+            padding-top: 30px;
+            padding-left: 115px;
+            padding-right: 0px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .party-name {
+            color: #9D0703;
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 4px;
+            letter-spacing: 0px;
+        }
+
+        .motto {
+            color: #9D0703;
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 12px;
+            margin-bottom: 10px;
+            margin-left: 55px;
+            letter-spacing: 0.2px;
+        }
+
+        .membership-label-wrapper {
+            display: flex;
+            justify-content: flex-start;
+            margin-top: 5px;
+            margin-left: 107px;
+        }
+
+        .membership-label {
+            background-color: var(--primary-maroon);
+            color: var(--primary-yellow);
+            padding: 4px 28px;
+            border-radius: 50px;
+            font-size: 19px;
+            font-weight: 800;
+            display: inline-block;
+            letter-spacing: 0.5px;
+        }
+
+        /* Circle Logo */
+        .logo-circle {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            overflow: hidden;
+            z-index: 100;
+        }
+
+        .logo-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .party-logo-img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .card-body {
+            display: flex;
+            padding: 10px 50px;
+            margin-top: 0px;
+            height: calc(var(--card-height) - 175px);
+        }
+
+        .left-section {
+            flex: 1.4;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 10px;
+            padding-top: 5px;
+            position: relative;
+        }
+
+        .details-table {
+            margin-bottom: 10px;
+            padding-left: 40px;
+        }
+
+        .row {
+            display: flex;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .label {
+            width: 140px;
+            font-size: 19px;
+            font-weight: 800;
+            color: #9D0703;
+        }
+
+        .colon {
+            font-size: 19px;
+            font-weight: 800;
+            color: #9D0703;
+            margin-right: 12px;
+            width: 15px;
+        }
+
+        .value {
+            font-size: 19px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .photo-qr-container {
+            padding: 0px 40px;
+            display: flex;
+            align-items: flex-end;
+            position: absolute;
+            bottom: 44px;
+            left: 0;
+            z-index: 20;
+        }
+
+        .member-photo-frame {
+            width: 92px;
+            height: 115px;
+            border: 2.5px solid var(--primary-maroon);
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            margin-right: 12px;
+            border-radius: 4px;
+        }
+
+        .qr-container {
+            display: flex;
+            align-items: flex-end;
+            position: relative;
+            background: transparent;
+        }
+
+        .qr-box {
+            width: 108px;
+            height: 108px;
+            background: transparent;
+            padding: 0;
+        }
+
+        .qr-box img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .member-id-vertical {
+            font-size: 11px;
+            font-weight: 800;
+            color: #cc0000;
+            letter-spacing: 0.8px;
+            white-space: nowrap;
+            
+            transform: rotate(-90deg);
+            transform-origin: center;
+            
+            width: 108px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            margin-left: -44px;
+            margin-right: -44px;
+            align-self: center;
+        }
+
+        .right-section {
+            flex: 1.2;
+            position: relative;
+            z-index: 10;
+        }
+
+        .small-graphic-wrapper {
+            position: absolute;
+            right: -20px;
+            bottom: -10px;
+            width: 320px;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .small-graphic-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            mix-blend-mode: multiply;
+        }
+
+        .signature-wrapper {
+            position: absolute;
+            left: -40px;
+            bottom: 40px;
+            z-index: 20;
+            text-align: center;
+        }
+
+        .signature-image {
+            width: 130px;
+            height: auto;
+            display: block;
+            mix-blend-mode: multiply;
+            opacity: 0.85;
+            margin-bottom: -5px;
+            transform: rotate(-3deg);
+        }
+
+        .signature-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--primary-maroon);
+        }
+
+        /* Footer Section */
+        .footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 44px;
+            background-color: var(--primary-maroon);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px 0 90px;
+            color: var(--primary-yellow);
+            z-index: 30;
+            white-space: nowrap;
+            flex-wrap: nowrap;
+        }
+
+        .social-links {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            white-space: nowrap;
+        }
+
+        .social-icons-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        .icon {
+            font-size: 12px;
+            font-weight: 900;
+            color: var(--primary-maroon);
+            background-color: var(--primary-yellow);
+            border-radius: 3px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .social-handle {
+            font-weight: 700;
+            font-size: 14px;
+            margin-left: 5px;
+            color: var(--primary-yellow);
+            white-space: nowrap;
+        }
+
+        .footer-address {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--primary-yellow);
+            display: flex;
+            align-items: center;
+            letter-spacing: 0px;
+            white-space: nowrap;
+        }
+
+        /* App Layout Container */
+        .app-layout {
+            display: flex;
+            gap: 30px;
+            width: 1420px;
+            max-width: 95vw;
+            height: 580px;
+            align-items: stretch;
+            margin: 20px auto;
+        }
+
+        /* Chatbot Styling */
+        .chatbot-window {
+            flex: 1;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .chatbot-header {
+            background: #9D0703;
+            padding: 16px 20px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 2px solid #F7C600;
+        }
+
+        .chatbot-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+        }
+
+        .chatbot-header-text h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .status-online {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #2ecc71;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px #2ecc71;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: #fcfcfc;
+        }
+
+        .message {
+            display: flex;
+            width: 100%;
+        }
+
+        .bot-message {
+            justify-content: flex-start;
+        }
+
+        .user-message {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 85%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.45;
+            font-weight: 500;
+        }
+
+        .bot-message .message-bubble {
+            background: #f1f2f6;
+            color: #2f3542;
+            border-top-left-radius: 4px;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .user-message .message-bubble {
+            background: #9D0703;
+            color: #ffffff;
+            border-top-right-radius: 4px;
+        }
+
+        .chat-input-container {
+            padding: 15px 20px;
+            background: #ffffff;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .chat-input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input-row input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1.5px solid #e1e2e6;
+            border-radius: 30px;
+            outline: none;
+            font-size: 14px;
+            transition: all 0.25s ease;
+        }
+
+        .chat-input-row input:focus {
+            border-color: #9D0703;
+            box-shadow: 0 0 0 3px rgba(157, 7, 3, 0.1);
+        }
+
+        .chat-input-row button {
+            width: 44px;
+            height: 44px;
+            background: #9D0703;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.25s ease;
+            font-size: 16px;
+        }
+
+        .chat-input-row button:hover {
+            background: #b50904;
+            transform: scale(1.05);
+        }
+
+        /* Button & Action Rows */
+        .chat-upload-row, .chat-download-row {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .action-btn, .download-action-btn, .reset-action-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s ease;
+        }
+
+        .action-btn {
+            background: #9D0703;
+            color: white;
+        }
+
+        .action-btn:hover {
+            background: #b50904;
+            transform: translateY(-2px);
+        }
+
+        .download-action-btn {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .download-action-btn:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .reset-action-btn {
+            background: #f1f2f6;
+            color: #2f3542;
+            border: 1px solid #d1d2d6;
+        }
+
+        .reset-action-btn:hover {
+            background: #e1e2e6;
+        }
+
+        /* Preview Area */
+        .preview-area {
+            flex: 1.4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.04);
+            padding: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+
+        .preview-area .card-container {
+            transform: scale(0.92);
+            transform-origin: center;
+            flex-shrink: 0;
+        }
+
+        .photo-placeholder {
+            width: 100%;
+            height: 100%;
+            background-color: #f1f2f6;
+            background-image: radial-gradient(#d1d2d6 20%, transparent 20%),
+                              radial-gradient(#d1d2d6 20%, transparent 20%);
+            background-size: 10px 10px;
+            background-position: 0 0, 5px 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-layout">
+        <!-- Chatbot Window (Left Side) -->
+        <div class="chatbot-window">
+            <div class="chatbot-header">
+                <div class="chatbot-avatar">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div class="chatbot-header-text">
+                    <h3>TVK ID அட்டை உதவியாளர்</h3>
+                    <span class="status-online"><span class="status-dot"></span>ஆன்லைனில்</span>
+                </div>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be dynamically inserted here -->
+            </div>
+            <div class="chat-input-container">
+                <div class="chat-input-row" id="textInputRow">
+                    <input type="text" id="chatInput" placeholder="பதிலை இங்கே தட்டச்சு செய்யவும்..." autocomplete="off">
+                    <button id="sendBtn"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+                <div class="chat-upload-row" id="uploadInputRow" style="display: none;">
+                    <input type="file" id="photoUpload" accept="image/*" style="display: none;">
+                    <button id="uploadBtn" class="action-btn"><i class="fa-solid fa-camera"></i> புகைப்படத்தைத் தேர்ந்தெடுக்கவும்</button>
+                </div>
+                <div class="chat-download-row" id="downloadRow" style="display: none;">
+                    <button id="downloadBtn" class="download-action-btn"><i class="fa-solid fa-download"></i> அட்டைப் பதிவிறக்கம் (PNG)</button>
+                    <button id="resetBtn" class="reset-action-btn"><i class="fa-solid fa-rotate-right"></i> மீண்டும்</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Container (Right Side) -->
+        <div class="preview-area">
+            <div class="card-container" id="idCard">
+                <!-- Header Section -->
+                <div class="header">
+                    <h1 class="party-name">தமிழக வெற்றிக் கழகம்</h1>
+                    <p class="motto">பிறப்பொக்கும் எல்லா உயிர்க்கும்!</p>
+                    <div class="membership-label-wrapper">
+                        <div class="membership-label">உறுப்பினர் அட்டை</div>
+                    </div>
+                </div>
+
+                <!-- Circle Logo (Top Right) -->
+                <div class="logo-circle">
+                    <div class="logo-inner">
+                        <img src="public/images/logo.jpeg" alt="TVK Logo" class="party-logo-img">
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <!-- Left Section: Member Details & Photo -->
+                    <div class="left-section">
+                        <div class="details-table">
+                            <div class="row">
+                                <div class="label">பெயர்</div>
+                                <div class="colon">:</div>
+                                <div class="value" id="valName">-</div>
+                            </div>
+                            <div class="row">
+                                <div class="label">பூத் எண்</div>
+                                <div class="colon">:</div>
+                                <div class="value" id="valBoothNo">-</div>
+                            </div>
+                            <div class="row">
+                                <div class="label">சட்டமன்றம்</div>
+                                <div class="colon">:</div>
+                                <div class="value" id="valConstituency">-</div>
+                            </div>
+                            <div class="row">
+                                <div class="label">மாவட்டம்</div>
+                                <div class="colon">:</div>
+                                <div class="value" id="valDistrict">-</div>
+                            </div>
+                            <div class="row">
+                                <div class="label">மாநிலம்</div>
+                                <div class="colon">:</div>
+                                <div class="value" id="valState">-</div>
+                            </div>
+                        </div>
+
+                        <div class="photo-qr-container">
+                            <div class="member-photo-frame">
+                                <img id="valPhoto" src="" alt="Member Photo" style="display: none; width: 100%; height: 100%; object-fit: cover;">
+                                <div id="photoPlaceholder" class="photo-placeholder"></div>
+                            </div>
+                            <div class="qr-container">
+                                <div class="qr-box">
+                                    <img id="valQrCode" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=WJB2199364&color=800000&bgcolor=FFCE00" alt="QR">
+                                </div>
+                                <div class="member-id-vertical" id="valMemberId">
+                                    WJB2199364
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Section: Graphic & Signatures -->
+                    <div class="right-section">
+                        <div class="small-graphic-wrapper">
+                            <img src="public/images/image.png" alt="Small Graphic" class="small-graphic-img">
+                        </div>
+
+                        <div class="signature-wrapper">
+                            <img src="public/images/signature.jpeg" alt="Signature" class="signature-image">
+                            <div class="signature-title">தலைவர்</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Section -->
+                <div class="footer">
+                    <div class="footer-left">
+                        <div class="social-links">
+                            <div class="social-icons-group">
+                                <span class="icon"><i class="fa-brands fa-facebook-f"></i></span>
+                                <span class="icon"><i class="fa-brands fa-instagram"></i></span>
+                                <span class="icon"><i class="fa-brands fa-x-twitter"></i></span>
+                            </div>
+                            <div class="social-handle">| @tvkvijayhq</div>
+                        </div>
+                    </div>
+                    <div class="footer-address">
+                        பிளாட் எண்: 275, சீ ஷோர் டவுன், 8வது அவென்யூ, பனையூர், சென்னை - 600119.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatMessages = document.getElementById('chatMessages');
+            const chatInput = document.getElementById('chatInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const textInputRow = document.getElementById('textInputRow');
+            const uploadInputRow = document.getElementById('uploadInputRow');
+            const photoUpload = document.getElementById('photoUpload');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const downloadRow = document.getElementById('downloadRow');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const resetBtn = document.getElementById('resetBtn');
+
+            // Card Preview Elements
+            const valName = document.getElementById('valName');
+            const valBoothNo = document.getElementById('valBoothNo');
+            const valConstituency = document.getElementById('valConstituency');
+            const valDistrict = document.getElementById('valDistrict');
+            const valState = document.getElementById('valState');
+            const valPhoto = document.getElementById('valPhoto');
+            const photoPlaceholder = document.getElementById('photoPlaceholder');
+            const valQrCode = document.getElementById('valQrCode');
+            const valMemberId = document.getElementById('valMemberId');
+
+            let currentStep = 0;
+            let memberData = {
+                name: '',
+                boothNo: '',
+                constituency: '',
+                district: '',
+                state: 'தமிழ்நாடு',
+                memberId: '',
+                photoUrl: ''
+            };
+
+            // Generate a random membership ID
+            function generateMemberId() {
+                const randomNum = Math.floor(1000000 + Math.random() * 9000000);
+                return 'WJB' + randomNum;
+            }
+
+            // Initialize/reset card and chat
+            function initChat() {
+                chatMessages.innerHTML = '';
+                memberData = {
+                    name: '',
+                    boothNo: '',
+                    constituency: '',
+                    district: '',
+                    state: '',
+                    memberId: generateMemberId(),
+                    photoUrl: 'public/images/vijay.jpg'
+                };
+
+                // Set default complete preview
+                valName.innerText = memberData.name;
+                valBoothNo.innerText = memberData.boothNo;
+                valConstituency.innerText = memberData.constituency;
+                valDistrict.innerText = memberData.district;
+                valState.innerText = memberData.state;
+                valPhoto.src = memberData.photoUrl;
+                valPhoto.style.display = 'block';
+                photoPlaceholder.style.display = 'none';
+
+                // Set dynamic QR code and vertical text
+                valMemberId.innerText = memberData.memberId;
+                valQrCode.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${memberData.memberId}&color=800000&bgcolor=FFCE00`;
+
+                // Reset UI Visibility
+                textInputRow.style.display = 'flex';
+                uploadInputRow.style.display = 'none';
+                downloadRow.style.display = 'none';
+                chatInput.value = '';
+                chatInput.disabled = false;
+                sendBtn.disabled = false;
+
+                currentStep = 0;
+                addBotMessage("வணக்கம்! நான் TVK உறுப்பினர் அட்டை தயாரிக்கும் உதவியாளர். உங்கள் புதிய அட்டை தயாராக சில கேள்விகளுக்கு பதிலளிக்கவும்.");
+                setTimeout(() => {
+                    addBotMessage("முதலில், **உறுப்பினரின் பெயர் (Name)** என்ன?");
+                }, 800);
+            }
+
+            function addBotMessage(text) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message bot-message';
+                
+                // Basic markdown-like replacement for bold text
+                let htmlContent = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                messageDiv.innerHTML = `<div class="message-bubble">${htmlContent}</div>`;
+                chatMessages.appendChild(messageDiv);
+                scrollToBottom();
+            }
+
+            function addUserMessage(text) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message user-message';
+                messageDiv.innerHTML = `<div class="message-bubble">${text}</div>`;
+                chatMessages.appendChild(messageDiv);
+                scrollToBottom();
+            }
+
+            function scrollToBottom() {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function containsEnglish(str) {
+                return /[a-zA-Z]/.test(str);
+            }
+
+            function handleUserInput() {
+                let val = chatInput.value.trim();
+                if (!val && currentStep !== 4) return; // Allow empty for state (defaulting to Tamil Nadu)
+
+                val = val.toUpperCase();
+                const isEnglishFlow = containsEnglish(memberData.name) || containsEnglish(val);
+                const defaultState = isEnglishFlow ? 'TAMIL NADU' : 'தமிழ்நாடு';
+
+                chatInput.value = '';
+                addUserMessage(val || defaultState);
+
+                // Handle current step
+                switch (currentStep) {
+                    case 0:
+                        memberData.name = val;
+                        valName.innerText = val;
+                        currentStep = 1;
+                        setTimeout(() => {
+                            addBotMessage("அடுத்து, உங்கள் **பூத் எண் (Booth No)** உள்ளிடவும்:");
+                        }, 500);
+                        break;
+                    case 1:
+                        memberData.boothNo = val;
+                        valBoothNo.innerText = val;
+                        currentStep = 2;
+                        setTimeout(() => {
+                            addBotMessage("உங்கள் **சட்டமன்ற தொகுதி (Assembly Constituency)** பெயர் என்ன?");
+                        }, 500);
+                        break;
+                    case 2:
+                        memberData.constituency = val;
+                        valConstituency.innerText = val;
+                        currentStep = 3;
+                        setTimeout(() => {
+                            addBotMessage("உங்கள் **மாவட்டம் (District)** எது?");
+                        }, 500);
+                        break;
+                    case 3:
+                        memberData.district = val;
+                        valDistrict.innerText = val;
+                        currentStep = 4;
+                        setTimeout(() => {
+                            addBotMessage("உங்கள் **மாநிலம் (State)** எது? (தமிழ்நாடு என அமைக்க Enter அழுத்தவும்)");
+                        }, 500);
+                        break;
+                    case 4:
+                        memberData.state = val || defaultState;
+                        valState.innerText = memberData.state;
+                        currentStep = 5;
+                        setTimeout(() => {
+                            addBotMessage("இப்போது, உங்கள் **புகைப்படத்தை (Photo)** பதிவேற்றவும். கீழே உள்ள பொத்தானைப் பயன்படுத்தவும்:");
+                            textInputRow.style.display = 'none';
+                            uploadInputRow.style.display = 'flex';
+                        }, 500);
+                        break;
+                }
+            }
+
+            // Send on click or Enter key
+            sendBtn.addEventListener('click', handleUserInput);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleUserInput();
+            });
+
+            // Trigger photo upload click
+            uploadBtn.addEventListener('click', () => {
+                photoUpload.click();
+            });
+
+            // Handle File Selection
+            photoUpload.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        memberData.photoUrl = event.target.result;
+                        valPhoto.src = event.target.result;
+                        valPhoto.style.display = 'block';
+                        photoPlaceholder.style.display = 'none';
+
+                        addUserMessage("📷 புகைப்படம் பதிவேற்றப்பட்டது");
+                        uploadInputRow.style.display = 'none';
+                        currentStep = 6;
+
+                        setTimeout(() => {
+                            addBotMessage("அற்புதம்! உங்கள் TVK உறுப்பினர் அட்டை முழுமையாகத் தயாராக உள்ளது.");
+                            addBotMessage("கீழே உள்ள பதிவிறக்க பொத்தானை அழுத்தி அட்டைப் படத்தை (PNG) சேமித்துக் கொள்ளலாம்.");
+                            downloadRow.style.display = 'flex';
+                        }, 800);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Download ID Card PNG using html2canvas
+            downloadBtn.addEventListener('click', () => {
+                const cardEl = document.getElementById('idCard');
+                
+                // Temporarily reset any CSS transforms or scale for rendering
+                const prevTransform = cardEl.style.transform;
+                cardEl.style.transform = 'none';
+
+                // Show status message
+                addBotMessage("⏳ உங்கள் உறுப்பினர் அட்டை படம் தயாராகிறது, தயவுசெய்து காத்திருக்கவும்...");
+
+                setTimeout(() => {
+                    html2canvas(cardEl, {
+                        scale: 2, // High resolution (2x scale)
+                        useCORS: true,
+                        backgroundColor: null,
+                        logging: false
+                    }).then(canvas => {
+                        cardEl.style.transform = prevTransform; // Restore transform
+
+                        // Convert to link and trigger download
+                        const link = document.createElement('a');
+                        link.download = `${memberData.name || 'tvk_member'}_id_card.png`;
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+
+                        addBotMessage("✅ அட்டை வெற்றிகரமாகப் பதிவிறக்கப்பட்டது!");
+                    }).catch(err => {
+                        console.error("Canvas render error: ", err);
+                        addBotMessage("❌ பதிவிறக்குவதில் பிழை ஏற்பட்டது. மீண்டும் முயற்சிக்கவும்.");
+                    });
+                }, 500);
+            });
+
+            // Reset and start again
+            resetBtn.addEventListener('click', initChat);
+
+            // Start Chatbot
+            initChat();
+        });
+    </script>
+</body>
+
+</html>

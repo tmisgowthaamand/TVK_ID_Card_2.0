@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -18,18 +19,7 @@ app.set('layout', path.join(__dirname, 'views/layouts/main'));
 
 // Routes
 app.get('/', (req, res) => {
-    const memberData = {
-        name: "உதாரண பெயர்",
-        boothNo: "123",
-        constituency: "சென்னை",
-        district: "சென்னை",
-        state: "தமிழ்நாடு",
-        memberId: "WJB2199364"
-    };
-    res.render('index', { 
-        title: 'TVK ID Card Design',
-        member: memberData
-    });
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 if (process.env.NODE_ENV !== 'production') {
