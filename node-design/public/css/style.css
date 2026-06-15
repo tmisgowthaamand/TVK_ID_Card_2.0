@@ -1,0 +1,570 @@
+:root {
+    --primary-yellow: #FFCE00;
+    --primary-maroon: #800000;
+    --card-width: 856px;
+    --card-height: 540px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Noto Sans Tamil', 'Hind Madurai', sans-serif;
+}
+
+body {
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.card-container {
+    background-color: var(--primary-yellow);
+    width: var(--card-width);
+    height: var(--card-height);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+}
+
+.header {
+    text-align: left;
+    padding-top: 30px;
+    padding-left: 115px;
+    padding-right: 0px;
+    position: relative;
+    z-index: 10;
+}
+
+.party-name {
+    color: #9D0703;
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 4px;
+    letter-spacing: 0px;
+}
+
+.motto {
+    color: #9D0703;
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 12px;
+    margin-bottom: 10px;
+    margin-left: 55px;
+    letter-spacing: 0.2px;
+}
+
+.membership-label-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 5px;
+    margin-left: 107px;
+}
+
+.membership-label {
+    background-color: var(--primary-maroon);
+    color: var(--primary-yellow);
+    padding: 4px 28px;
+    border-radius: 50px;
+    font-size: 19px;
+    font-weight: 800;
+    display: inline-block;
+    letter-spacing: 0.5px;
+}
+
+/* Circle Logo */
+.logo-circle {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    overflow: hidden;
+    z-index: 100;
+}
+
+.logo-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.party-logo-img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.card-body {
+    display: flex;
+    padding: 10px 50px;
+    margin-top: 0px;
+    height: calc(var(--card-height) - 175px);
+}
+
+.left-section {
+    flex: 1.4;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 10px;
+    padding-top: 5px;
+    position: relative;
+}
+
+.details-table {
+    margin-bottom: 10px;
+    padding-left: 40px;
+}
+
+.row {
+    display: flex;
+    margin-bottom: 8px;
+    align-items: center;
+}
+
+.label {
+    width: 140px;
+    font-size: 19px;
+    font-weight: 800;
+    color: #9D0703;
+}
+
+.colon {
+    font-size: 19px;
+    font-weight: 800;
+    color: #9D0703;
+    margin-right: 12px;
+    width: 15px;
+}
+
+.value {
+    font-size: 19px;
+    font-weight: 700;
+    color: #000;
+}
+
+.photo-qr-container {
+    padding: 0px 40px;
+    display: flex;
+    align-items: flex-end;
+    position: absolute;
+    bottom: 44px;
+    left: 0;
+    z-index: 20;
+}
+
+.member-photo-frame {
+    width: 92px;
+    height: 115px;
+    border: 2.5px solid var(--primary-maroon);
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    margin-right: 12px;
+    border-radius: 4px;
+}
+
+.qr-container {
+    display: flex;
+    align-items: flex-end;
+    position: relative;
+    background: transparent;
+}
+
+.qr-box {
+    width: 108px;
+    height: 108px;
+    background: transparent;
+    padding: 0;
+}
+
+.qr-box img {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.member-id-vertical {
+    font-size: 11px;
+    font-weight: 800;
+    color: #cc0000;
+    letter-spacing: 0.8px;
+    white-space: nowrap;
+    
+    /* Rotate standard text block for html2canvas compatibility */
+    transform: rotate(-90deg);
+    transform-origin: center;
+    
+    /* Set dimensions and display */
+    width: 108px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* Positioning next to the QR code */
+    margin-left: -44px;
+    margin-right: -44px;
+    align-self: center;
+}
+
+.right-section {
+    flex: 1.2;
+    position: relative;
+    z-index: 10;
+}
+
+.small-graphic-wrapper {
+    position: absolute;
+    right: -20px;
+    bottom: -10px;
+    width: 320px;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.small-graphic-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    mix-blend-mode: multiply;
+}
+
+.signature-wrapper {
+    position: absolute;
+    left: -40px;
+    bottom: 40px;
+    z-index: 20;
+    text-align: center;
+}
+
+.signature-image {
+    width: 130px;
+    height: auto;
+    display: block;
+    mix-blend-mode: multiply;
+    opacity: 0.85;
+    margin-bottom: -5px;
+    transform: rotate(-3deg);
+}
+
+.signature-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--primary-maroon);
+}
+
+/* Footer Section */
+.footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 44px;
+    background-color: var(--primary-maroon);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px 0 90px;
+    color: var(--primary-yellow);
+    z-index: 30;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+}
+
+.social-links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+}
+
+.social-icons-group {
+    display: flex;
+    gap: 6px;
+}
+
+.icon {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--primary-maroon);
+    background-color: var(--primary-yellow);
+    border-radius: 3px;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.social-handle {
+    font-weight: 700;
+    font-size: 14px;
+    margin-left: 5px;
+    color: var(--primary-yellow);
+    white-space: nowrap;
+}
+
+.footer-address {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--primary-yellow);
+    display: flex;
+    align-items: center;
+    letter-spacing: 0px;
+    white-space: nowrap;
+}
+
+/* App Layout Container */
+.app-layout {
+    display: flex;
+    gap: 30px;
+    width: 1420px;
+    max-width: 95vw;
+    height: 580px;
+    align-items: stretch;
+    margin: 20px auto;
+}
+
+/* Chatbot Styling */
+.chatbot-window {
+    flex: 1;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.chatbot-header {
+    background: #9D0703;
+    padding: 16px 20px;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 2px solid #F7C600;
+}
+
+.chatbot-avatar {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+}
+
+.chatbot-header-text h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.status-online {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background: #2ecc71;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 8px #2ecc71;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: #fcfcfc;
+}
+
+.message {
+    display: flex;
+    width: 100%;
+}
+
+.bot-message {
+    justify-content: flex-start;
+}
+
+.user-message {
+    justify-content: flex-end;
+}
+
+.message-bubble {
+    max-width: 85%;
+    padding: 12px 18px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.45;
+    font-weight: 500;
+}
+
+.bot-message .message-bubble {
+    background: #f1f2f6;
+    color: #2f3542;
+    border-top-left-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.03);
+}
+
+.user-message .message-bubble {
+    background: #9D0703;
+    color: #ffffff;
+    border-top-right-radius: 4px;
+}
+
+.chat-input-container {
+    padding: 15px 20px;
+    background: #ffffff;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.chat-input-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.chat-input-row input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1.5px solid #e1e2e6;
+    border-radius: 30px;
+    outline: none;
+    font-size: 14px;
+    transition: all 0.25s ease;
+}
+
+.chat-input-row input:focus {
+    border-color: #9D0703;
+    box-shadow: 0 0 0 3px rgba(157, 7, 3, 0.1);
+}
+
+.chat-input-row button {
+    width: 44px;
+    height: 44px;
+    background: #9D0703;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.25s ease;
+    font-size: 16px;
+}
+
+.chat-input-row button:hover {
+    background: #b50904;
+    transform: scale(1.05);
+}
+
+/* Button & Action Rows */
+.chat-upload-row, .chat-download-row {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+}
+
+.action-btn, .download-action-btn, .reset-action-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+}
+
+.action-btn {
+    background: #9D0703;
+    color: white;
+}
+
+.action-btn:hover {
+    background: #b50904;
+    transform: translateY(-2px);
+}
+
+.download-action-btn {
+    background: #2ecc71;
+    color: white;
+}
+
+.download-action-btn:hover {
+    background: #27ae60;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+}
+
+.reset-action-btn {
+    background: #f1f2f6;
+    color: #2f3542;
+    border: 1px solid #d1d2d6;
+}
+
+.reset-action-btn:hover {
+    background: #e1e2e6;
+}
+
+/* Preview Area */
+.preview-area {
+    flex: 1.4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.04);
+    padding: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+/* Scale preview card to fit inside preview container if needed */
+.preview-area .card-container {
+    transform: scale(0.92);
+    transform-origin: center;
+    flex-shrink: 0;
+}
+
+.photo-placeholder {
+    width: 100%;
+    height: 100%;
+    background-color: #f1f2f6;
+    background-image: radial-gradient(#d1d2d6 20%, transparent 20%),
+                      radial-gradient(#d1d2d6 20%, transparent 20%);
+    background-size: 10px 10px;
+    background-position: 0 0, 5px 5px;
+}

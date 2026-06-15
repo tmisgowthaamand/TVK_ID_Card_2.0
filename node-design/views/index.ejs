@@ -1,0 +1,376 @@
+<div class="app-layout">
+    <!-- Chatbot Window (Left Side) -->
+    <div class="chatbot-window">
+        <div class="chatbot-header">
+            <div class="chatbot-avatar">
+                <i class="fa-solid fa-robot"></i>
+            </div>
+            <div class="chatbot-header-text">
+                <h3>TVK ID அட்டை உதவியாளர்</h3>
+                <span class="status-online"><span class="status-dot"></span>ஆன்லைனில்</span>
+            </div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- Messages will be dynamically inserted here -->
+        </div>
+        <div class="chat-input-container">
+            <div class="chat-input-row" id="textInputRow">
+                <input type="text" id="chatInput" placeholder="பதிலை இங்கே தட்டச்சு செய்யவும்..." autocomplete="off">
+                <button id="sendBtn"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+            <div class="chat-upload-row" id="uploadInputRow" style="display: none;">
+                <input type="file" id="photoUpload" accept="image/*" style="display: none;">
+                <button id="uploadBtn" class="action-btn"><i class="fa-solid fa-camera"></i> புகைப்படத்தைத் தேர்ந்தெடுக்கவும்</button>
+            </div>
+            <div class="chat-download-row" id="downloadRow" style="display: none;">
+                <button id="downloadBtn" class="download-action-btn"><i class="fa-solid fa-download"></i> அட்டைப் பதிவிறக்கம் (PNG)</button>
+                <button id="resetBtn" class="reset-action-btn"><i class="fa-solid fa-rotate-right"></i> மீண்டும்</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Container (Right Side) -->
+    <div class="preview-area">
+        <div class="card-container" id="idCard">
+            <!-- Header Section -->
+            <div class="header">
+                <h1 class="party-name">தமிழக வெற்றிக் கழகம்</h1>
+                <p class="motto">பிறப்பொக்கும் எல்லா உயிர்க்கும்!</p>
+                <div class="membership-label-wrapper">
+                    <div class="membership-label">உறுப்பினர் அட்டை</div>
+                </div>
+            </div>
+
+            <!-- Circle Logo (Top Right) -->
+            <div class="logo-circle">
+                <div class="logo-inner">
+                    <img src="/images/logo.jpeg" alt="TVK Logo" class="party-logo-img">
+                </div>
+            </div>
+
+            <div class="card-body">
+                <!-- Left Section: Member Details & Photo -->
+                <div class="left-section">
+                    <div class="details-table">
+                        <div class="row">
+                            <div class="label">பெயர்</div>
+                            <div class="colon">:</div>
+                            <div class="value" id="valName">-</div>
+                        </div>
+                        <div class="row">
+                            <div class="label">பூத் எண்</div>
+                            <div class="colon">:</div>
+                            <div class="value" id="valBoothNo">-</div>
+                        </div>
+                        <div class="row">
+                            <div class="label">சட்டமன்றம்</div>
+                            <div class="colon">:</div>
+                            <div class="value" id="valConstituency">-</div>
+                        </div>
+                        <div class="row">
+                            <div class="label">மாவட்டம்</div>
+                            <div class="colon">:</div>
+                            <div class="value" id="valDistrict">-</div>
+                        </div>
+                        <div class="row">
+                            <div class="label">மாநிலம்</div>
+                            <div class="colon">:</div>
+                            <div class="value" id="valState">-</div>
+                        </div>
+                    </div>
+
+                    <div class="photo-qr-container">
+                        <div class="member-photo-frame">
+                            <img id="valPhoto" src="" alt="Member Photo" style="display: none; width: 100%; height: 100%; object-fit: cover;">
+                            <div id="photoPlaceholder" class="photo-placeholder"></div>
+                        </div>
+                        <div class="qr-container">
+                            <div class="qr-box">
+                                <img id="valQrCode" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<%= member.memberId %>&color=800000&bgcolor=FFCE00"
+                                    alt="QR">
+                            </div>
+                            <div class="member-id-vertical" id="valMemberId">
+                                <%= member.memberId %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="right-section">
+                    <div class="small-graphic-wrapper">
+                        <img src="/images/image.png" alt="Small Graphic" class="small-graphic-img">
+                    </div>
+
+                    <div class="signature-wrapper">
+                        <img src="/images/signature.jpeg" alt="Signature" class="signature-image">
+                        <div class="signature-title">தலைவர்</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Section -->
+            <div class="footer">
+                <div class="footer-left">
+                    <div class="social-links">
+                        <div class="social-icons-group">
+                            <span class="icon"><i class="fa-brands fa-facebook-f"></i></span>
+                            <span class="icon"><i class="fa-brands fa-instagram"></i></span>
+                            <span class="icon"><i class="fa-brands fa-x-twitter"></i></span>
+                        </div>
+                        <div class="social-handle">| @tvkvijayhq</div>
+                    </div>
+                </div>
+                <div class="footer-address">
+                    பிளாட் எண்: 275, சீ ஷோர் டவுன், 8வது அவென்யூ, பனையூர், சென்னை - 600119.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const textInputRow = document.getElementById('textInputRow');
+        const uploadInputRow = document.getElementById('uploadInputRow');
+        const photoUpload = document.getElementById('photoUpload');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const downloadRow = document.getElementById('downloadRow');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // Card Preview Elements
+        const valName = document.getElementById('valName');
+        const valBoothNo = document.getElementById('valBoothNo');
+        const valConstituency = document.getElementById('valConstituency');
+        const valDistrict = document.getElementById('valDistrict');
+        const valState = document.getElementById('valState');
+        const valPhoto = document.getElementById('valPhoto');
+        const photoPlaceholder = document.getElementById('photoPlaceholder');
+        const valQrCode = document.getElementById('valQrCode');
+        const valMemberId = document.getElementById('valMemberId');
+
+        let currentStep = 0;
+        let memberData = {
+            name: '',
+            boothNo: '',
+            constituency: '',
+            district: '',
+            state: 'தமிழ்நாடு',
+            memberId: '',
+            photoUrl: ''
+        };
+
+        // Generate a random membership ID
+        function generateMemberId() {
+            const randomNum = Math.floor(1000000 + Math.random() * 9000000);
+            return 'WJB' + randomNum;
+        }
+
+        // Initialize/reset card and chat
+        function initChat() {
+            chatMessages.innerHTML = '';
+            memberData = {
+                name: '',
+                boothNo: '',
+                constituency: '',
+                district: '',
+                state: 'தமிழ்நாடு',
+                memberId: generateMemberId(),
+                photoUrl: ''
+            };
+
+            // Reset preview
+            valName.innerText = '-';
+            valBoothNo.innerText = '-';
+            valConstituency.innerText = '-';
+            valDistrict.innerText = '-';
+            valState.innerText = '-';
+            valPhoto.style.display = 'none';
+            valPhoto.src = '';
+            photoPlaceholder.style.display = 'block';
+
+            // Set dynamic QR code and vertical text
+            valMemberId.innerText = memberData.memberId;
+            valQrCode.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${memberData.memberId}&color=800000&bgcolor=FFCE00`;
+
+            // Reset UI Visibility
+            textInputRow.style.display = 'flex';
+            uploadInputRow.style.display = 'none';
+            downloadRow.style.display = 'none';
+            chatInput.value = '';
+            chatInput.disabled = false;
+            sendBtn.disabled = false;
+
+            currentStep = 0;
+            addBotMessage("வணக்கம்! நான் TVK உறுப்பினர் அட்டை தயாரிக்கும் உதவியாளர். உங்கள் புதிய அட்டை தயாராக சில கேள்விகளுக்கு பதிலளிக்கவும்.");
+            setTimeout(() => {
+                addBotMessage("முதலில், **உறுப்பினரின் பெயர் (Name)** என்ன?");
+            }, 800);
+        }
+
+        function addBotMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot-message';
+            
+            // Basic markdown-like replacement for bold text
+            let htmlContent = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            messageDiv.innerHTML = `<div class="message-bubble">${htmlContent}</div>`;
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function addUserMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user-message';
+            messageDiv.innerHTML = `<div class="message-bubble">${text}</div>`;
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function containsEnglish(str) {
+            return /[a-zA-Z]/.test(str);
+        }
+
+        function handleUserInput() {
+            let val = chatInput.value.trim();
+            if (!val && currentStep !== 4) return; // Allow empty for state (defaulting to Tamil Nadu)
+
+            val = val.toUpperCase();
+            const isEnglishFlow = containsEnglish(memberData.name) || containsEnglish(val);
+            const defaultState = isEnglishFlow ? 'TAMIL NADU' : 'தமிழ்நாடு';
+
+            chatInput.value = '';
+            addUserMessage(val || defaultState);
+
+            // Handle current step
+            switch (currentStep) {
+                case 0:
+                    memberData.name = val;
+                    valName.innerText = val;
+                    currentStep = 1;
+                    setTimeout(() => {
+                        addBotMessage("அடுத்து, உங்கள் **பூத் எண் (Booth No)** உள்ளிடவும்:");
+                    }, 500);
+                    break;
+                case 1:
+                    memberData.boothNo = val;
+                    valBoothNo.innerText = val;
+                    currentStep = 2;
+                    setTimeout(() => {
+                        addBotMessage("உங்கள் **சட்டமன்ற தொகுதி (Assembly Constituency)** பெயர் என்ன?");
+                    }, 500);
+                    break;
+                case 2:
+                    memberData.constituency = val;
+                    valConstituency.innerText = val;
+                    currentStep = 3;
+                    setTimeout(() => {
+                        addBotMessage("உங்கள் **மாவட்டம் (District)** எது?");
+                    }, 500);
+                    break;
+                case 3:
+                    memberData.district = val;
+                    valDistrict.innerText = val;
+                    currentStep = 4;
+                    setTimeout(() => {
+                        addBotMessage("உங்கள் **மாநிலம் (State)** எது? (தமிழ்நாடு என அமைக்க Enter அழுத்தவும்)");
+                    }, 500);
+                    break;
+                case 4:
+                    memberData.state = val || defaultState;
+                    valState.innerText = memberData.state;
+                    currentStep = 5;
+                    setTimeout(() => {
+                        addBotMessage("இப்போது, உங்கள் **புகைப்படத்தை (Photo)** பதிவேற்றவும். கீழே உள்ள பொத்தானைப் பயன்படுத்தவும்:");
+                        textInputRow.style.display = 'none';
+                        uploadInputRow.style.display = 'flex';
+                    }, 500);
+                    break;
+            }
+        }
+
+        // Send on click or Enter key
+        sendBtn.addEventListener('click', handleUserInput);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleUserInput();
+        });
+
+        // Trigger photo upload click
+        uploadBtn.addEventListener('click', () => {
+            photoUpload.click();
+        });
+
+        // Handle File Selection
+        photoUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    memberData.photoUrl = event.target.result;
+                    valPhoto.src = event.target.result;
+                    valPhoto.style.display = 'block';
+                    photoPlaceholder.style.display = 'none';
+
+                    addUserMessage("📷 புகைப்படம் பதிவேற்றப்பட்டது");
+                    uploadInputRow.style.display = 'none';
+                    currentStep = 6;
+
+                    setTimeout(() => {
+                        addBotMessage("அற்புதம்! உங்கள் TVK உறுப்பினர் அட்டை முழுமையாகத் தயாராக உள்ளது.");
+                        addBotMessage("கீழே உள்ள பதிவிறக்க பொத்தானை அழுத்தி அட்டைப் படத்தை (PNG) சேமித்துக் கொள்ளலாம்.");
+                        downloadRow.style.display = 'flex';
+                    }, 800);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Download ID Card PNG using html2canvas
+        downloadBtn.addEventListener('click', () => {
+            const cardEl = document.getElementById('idCard');
+            
+            // Temporarily reset any CSS transforms or scale for rendering
+            const prevTransform = cardEl.style.transform;
+            cardEl.style.transform = 'none';
+
+            // Show a status indicator in the chat
+            addBotMessage("⏳ உங்கள் உறுப்பினர் அட்டை படம் தயாராகிறது, தயவுசெய்து காத்திருக்கவும்...");
+
+            setTimeout(() => {
+                html2canvas(cardEl, {
+                    scale: 2, // High resolution (2x scale)
+                    useCORS: true,
+                    backgroundColor: null,
+                    logging: false
+                }).then(canvas => {
+                    cardEl.style.transform = prevTransform; // Restore transform
+
+                    // Convert to link and trigger download
+                    const link = document.createElement('a');
+                    link.download = `${memberData.name || 'tvk_member'}_id_card.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+
+                    addBotMessage("✅ அட்டை வெற்றிகரமாகப் பதிவிறக்கப்பட்டது!");
+                }).catch(err => {
+                    console.error("Canvas render error: ", err);
+                    addBotMessage("❌ பதிவிறக்குவதில் பிழை ஏற்பட்டது. மீண்டும் முயற்சிக்கவும்.");
+                });
+            }, 500);
+        });
+
+        // Reset and start again
+        resetBtn.addEventListener('click', initChat);
+
+        // Start Chatbot
+        initChat();
+    });
+</script>
